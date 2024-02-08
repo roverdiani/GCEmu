@@ -1,5 +1,4 @@
 // This file is part of the GCEmu Project.
-// This is the main file for the loginserver project.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,13 +60,16 @@ std::string ConfigHandler::GetString(const std::string &keyName, const std::stri
 
 bool ConfigHandler::GetBool(const std::string &keyName, bool defaultValue) const
 {
-    std::string value = GetString(keyName, defaultValue ? "true" : "false");
-    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return std::tolower(c); });
-    return value == "true" || value == "1";
+    if (!IsSet(keyName))
+        return defaultValue;
+
+    return m_data[keyName];
 }
 
 int32_t ConfigHandler::GetInt(const std::string &keyName, int32_t defaultValue) const
 {
-    std::string value = GetString(keyName, std::to_string(defaultValue));
-    return std::stoi(value);
+    if (!IsSet(keyName))
+        return defaultValue;
+
+    return m_data[keyName];
 }

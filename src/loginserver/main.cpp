@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include "../common/ConfigHandler.h"
+#include "../common/config/ConfigHandler.h"
+#include "../common/network/TcpListener.h"
+#include "LoginSocket.h"
+#include "../common/crypto/CryptoHandler.h"
 
 int main(int argc, char* argv[])
 {
@@ -39,6 +42,20 @@ int main(int argc, char* argv[])
         std::cout << "Check if the config file is correct." << std::endl;
         return -1;
     }
+
+    std::cout << "Initializing OpenSSL... ";
+    if (!CryptoHandler::InitOpenSSL())
+    {
+        std::cout << "Failed to init OpenSSL. Exiting!" << std::endl;
+        return -1;
+    }
+    std::cout << "done!" << std::endl;
+
+    TcpListener<LoginSocket> listener("",
+                                      SConfigHandler.GetInt("port", 9501),
+                                      SConfigHandler.GetInt("network_threads", 1));
+
+    while (true);
 
     return 0;
 }

@@ -1,4 +1,5 @@
 {
   "bind_ip": "0.0.0.0",
-  "port": 9501
+  "port": 9501,
+  "network_threads": 1
 }

@@ -17,7 +17,7 @@ GCEmu is an open-source game server application designed for hosting online game
 
 ## Built With
 
-The project is built using C++ 17, CMake, Boost and some other libraries.
+The project is built using C++ 17, CMake, Boost, OpenSSL and some other libraries.
 For now, the project is mainly developed using Windows.
 
 ## Getting Started
@@ -33,8 +33,6 @@ There are some pre-requisites for building the project.
 * C++ build toolchain
 
 ## Contributing
-
-
 
 ### Creating A Pull Request
 
@@ -58,3 +56,5 @@ This project should be used for testing and learning - if you use it to run an i
 ## Acknowledgements
 
 * [Niels Lohmann's json library](https://github.com/nlohmann/json)
+* [CMaNGOS](https://github.com/cmangos/mangos-classic) - the networking code was *heavily* inspired or reused from their project, as it is code that is proven to work okay. Thank you, guys!
+* [GCNet](https://github.com/rocverde/GCNet)

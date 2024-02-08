@@ -19,6 +19,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Boost REQUIRED)
 find_package(nlohmann_json REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS} ${nlohmann_json_INCLUDE_DIRS})
+find_package(OpenSSL REQUIRED)
 
-add_executable(loginserver main.cpp ../common/ConfigHandler.cpp ../common/ConfigHandler.h)
+include_directories(${Boost_INCLUDE_DIRS} ${nlohmann_json_INCLUDE_DIRS} ${OpenSSL_INCLUDE_DIRS})
+
+add_executable(loginserver main.cpp ../common/config/ConfigHandler.cpp ../common/config/ConfigHandler.h ../common/network/TcpListener.h ../common/network/NetworkThread.h ../common/network/Socket.cpp ../common/network/Socket.h ../common/network/PacketBuffer.cpp ../common/network/PacketBuffer.h LoginSocket.cpp LoginSocket.h ../common/crypto/AuthHandler.cpp ../common/crypto/AuthHandler.h ../common/crypto/Md5Hmac.h ../common/crypto/CryptoHandler.cpp ../common/crypto/CryptoHandler.h ../common/crypto/DesEncryption.cpp ../common/crypto/DesEncryption.h)
+target_link_libraries(loginserver openssl::openssl)
