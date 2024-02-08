@@ -16,11 +16,11 @@
 #ifndef GCEMU_MD5HMAC_H
 #define GCEMU_MD5HMAC_H
 
+#include <cassert>
 #include <cstdint>
+#include <iostream>
 #include <vector>
 #include <openssl/hmac.h>
-#include <iostream>
-#include <boost/algorithm/hex.hpp>
 
 class Md5Hmac
 {

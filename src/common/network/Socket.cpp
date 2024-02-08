@@ -15,8 +15,8 @@
 
 #include "Socket.h"
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 #include <memory>
+#include <boost/lexical_cast.hpp>
 
 Socket::Socket(boost::asio::io_context &ioContext, const std::function<void(Socket *)>& closeHandler) : m_socket(ioContext)
 {

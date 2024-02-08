@@ -17,10 +17,10 @@
 #define GCEMU_NETWORKTHREAD_H
 
 #include <memory>
-#include <unordered_set>
 #include <mutex>
-#include <boost/asio.hpp>
 #include <thread>
+#include <unordered_set>
+#include <boost/asio.hpp>
 #include "Socket.h"
 
 template <typename SocketType>

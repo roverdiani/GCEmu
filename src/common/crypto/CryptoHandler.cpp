@@ -15,8 +15,8 @@
 
 #include "CryptoHandler.h"
 #include "DesEncryption.h"
-#include <openssl/provider.h>
 #include <iostream>
+#include <openssl/provider.h>
 #include <openssl/crypto.h>
 
 CryptoHandler::CryptoHandler(const std::vector<uint8_t> &key) : m_key(key)

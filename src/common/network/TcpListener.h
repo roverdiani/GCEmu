@@ -17,8 +17,8 @@
 #define GCEMU_TCPLISTENER_H
 
 #include <cstdint>
-#include <boost/asio.hpp>
 #include <thread>
+#include <boost/asio.hpp>
 #include "NetworkThread.h"
 
 template <typename SocketType>

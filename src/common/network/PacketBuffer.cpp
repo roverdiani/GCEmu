@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <cassert>
 #include "PacketBuffer.h"
+#include <cassert>
 
 PacketBuffer::PacketBuffer(int32_t initialSize) : m_buffer(initialSize, 0)
 {
