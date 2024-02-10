@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../crypto/Generator.h"
+#include "../util/Compressor.h"
 #include "Packet.h"
 #include <cstring>
 #include <boost/asio.hpp>
@@ -119,6 +120,15 @@ void Packet::ReadPayload(const std::vector<uint8_t> &packetData)
         Append(std::vector<uint8_t> {decryptedPayload.begin() + sizeof(m_opcode) + sizeof(m_payloadLength) + sizeof(m_isCompressed), decryptedPayload.end()});
     else
     {
-        // TODO: zlib decompression
+        uint32_t decompressedPayloadSize =
+                decryptedPayload[10] << 24 |
+                decryptedPayload[9] << 16 |
+                decryptedPayload[8] << 8 |
+                decryptedPayload[7];
+
+        std::vector<uint8_t> compressedPayload {decryptedPayload.begin() + 11, decryptedPayload.end() - 3};
+        std::vector<uint8_t> decompressedPayload = Compressor::DecompressData(compressedPayload, decompressedPayloadSize);
+        Append(decompressedPayload);
+        m_payloadLength = decryptedPayload.size();
     }
 }
