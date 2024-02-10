@@ -20,7 +20,7 @@ PacketBuffer::PacketBuffer(int32_t initialSize) : m_buffer(initialSize, 0)
 {
 }
 
-uint8_t PacketBuffer::Peak() const
+uint8_t PacketBuffer::Peek() const
 {
     return m_buffer[m_readPosition];
 }

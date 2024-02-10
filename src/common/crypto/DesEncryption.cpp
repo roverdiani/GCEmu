@@ -60,7 +60,7 @@ DesEncryption::EncryptData(const std::vector<uint8_t> &data, const std::vector<u
 }
 
 std::vector<uint8_t>
-DesEncryption::DecryptData(const std::vector<uint8_t> &data, const std::vector<uint8_t> &iv, const std::vector<uint8_t> &key)
+DesEncryption::DecryptData(const std::vector<uint8_t> &data, const uint8_t* iv, const std::vector<uint8_t> &key)
 {
     size_t bufLength = data.size() + 64 - 1;
     uint8_t *buf = (uint8_t *) malloc(bufLength);
@@ -68,7 +68,7 @@ DesEncryption::DecryptData(const std::vector<uint8_t> &data, const std::vector<u
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     EVP_CIPHER_CTX_init(ctx);
 
-    if (EVP_DecryptInit_ex(ctx, EVP_des_cbc(), nullptr, key.data(), iv.data()) != 1)
+    if (EVP_DecryptInit_ex(ctx, EVP_des_cbc(), nullptr, key.data(), iv) != 1)
     {
         printf("DesEncryption::DecryptData: Error: DES init error!");
         return std::vector<uint8_t>();

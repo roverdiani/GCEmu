@@ -25,15 +25,17 @@ public:
     CryptoHandler() = default;
     explicit CryptoHandler(const std::vector<uint8_t>& key);
 
+    void UpdateCryptoKey(const std::vector<uint8_t> &newKey);
+
     static bool InitOpenSSL();
 
     std::vector<uint8_t> EncryptPacket(const std::vector<uint8_t>& payload, const std::vector<uint8_t>& iv);
-    std::vector<uint8_t> DecryptPacket(const std::vector<uint8_t>& packetData);
+    std::vector<uint8_t> DecryptPacket(const std::vector<uint8_t>& encryptedData, const uint8_t* iv);
 
     static std::vector<uint8_t> PadData(std::vector<uint8_t> data);
 
 private:
-    // Default HMAC key
+    // Default DES key
     std::vector<uint8_t> m_key = { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
 };
 

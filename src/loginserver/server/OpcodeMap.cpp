@@ -1,5 +1,3 @@
-// This file is part of the GCEmu Project.
-//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -13,29 +11,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "LoginSocket.h"
-#include "../common/crypto/CryptoHandler.h"
+#include "OpcodeMap.h"
 
-LoginSocket::LoginSocket(boost::asio::io_context &ioContext, const std::function<void(Socket *)>& closeHandler) : Socket(ioContext, closeHandler)
+void OpcodeMap::BuildOpcodeList()
 {
-}
-
-bool LoginSocket::Open()
-{
-    if (!Socket::Open())
-        return false;
-
-    return true;
-}
-
-bool LoginSocket::ProcessIncomingData()
-{
-    while (ReadLengthRemaining() > 0)
-    {
-        char buf[1];
-        Read(buf, 1);
-        printf("0x%02X ", buf[0]);
-    }
-
-    return true;
+    StoreOpcode(0, "", nullptr);
 }

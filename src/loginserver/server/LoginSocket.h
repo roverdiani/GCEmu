@@ -16,7 +16,11 @@
 #ifndef GCEMU_LOGINSOCKET_H
 #define GCEMU_LOGINSOCKET_H
 
-#include "../common/network/Socket.h"
+#include "../../common/crypto/AuthHandler.h"
+#include "../../common/crypto/CryptoHandler.h"
+#include "../../common/network/Socket.h"
+#include "../../common/network/Packet.h"
+#include <mutex>
 #include <boost/asio.hpp>
 
 class LoginSocket : public Socket
@@ -26,8 +30,20 @@ public:
 
     bool Open() override;
 
+    void SendPacket(Packet packet);
+
 private:
     bool ProcessIncomingData() override;
+
+    void EventAcceptConnectionNot();
+
+    std::shared_ptr<AuthHandler> m_authHandler = std::make_shared<AuthHandler>();
+    std::shared_ptr<CryptoHandler> m_cryptoHandler = std::make_shared<CryptoHandler>();
+
+    uint16_t m_prefix = 0x00;
+    uint32_t m_packetCount = 0x00;
+
+    std::mutex m_loginSocketMutex;
 };
 
 #endif //GCEMU_LOGINSOCKET_H

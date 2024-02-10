@@ -28,7 +28,7 @@ class PacketBuffer
 public:
     explicit PacketBuffer(int32_t initialSize = DEFAULT_BUFFER_SIZE);
 
-    uint8_t Peak() const;
+    uint8_t Peek() const;
 
     size_t ReadLengthRemaining() const;
 

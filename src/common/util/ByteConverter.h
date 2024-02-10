@@ -13,17 +13,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef GCEMU_DESENCRYPTION_H
-#define GCEMU_DESENCRYPTION_H
+#ifndef GCEMU_BYTECONVERTER_H
+#define GCEMU_BYTECONVERTER_H
 
-#include <cstdint>
-#include <vector>
+#include <algorithm>
 
-class DesEncryption
+template<size_t T>
+inline void Convert(char* val)
 {
-public:
-    static std::vector<uint8_t> EncryptData(const std::vector<uint8_t>& data, const std::vector<uint8_t>& iv, const std::vector<uint8_t>& key);
-    static std::vector<uint8_t> DecryptData(const std::vector<uint8_t>& data, const uint8_t* iv, const std::vector<uint8_t>& key);
-};
+    std::swap(*val, *(val + T - 1));
+    Convert<T - 2>(val + 1);
+}
 
-#endif //GCEMU_DESENCRYPTION_H
+template<> inline void Convert<0>(char*) {}
+template<> inline void Convert<1>(char*) {}
+
+template<typename T>
+inline void Apply(T* val)
+{
+    Convert<sizeof(T)>((char*)(val));
+}
+
+template<typename T>
+inline void EndianConvertReverse(T& val)
+{
+    Apply<T>(&val);
+}
+
+#endif //GCEMU_BYTECONVERTER_H

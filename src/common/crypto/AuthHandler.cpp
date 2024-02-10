@@ -34,3 +34,8 @@ bool AuthHandler::VerifyHmac(const std::vector<uint8_t>& packetData)
 
     return storedHmac == expectedHmac;
 }
+
+void AuthHandler::UpdateHmacKey(const std::vector<uint8_t> &newKey)
+{
+    m_hmacKey = newKey;
+}

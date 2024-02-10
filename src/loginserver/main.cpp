@@ -18,7 +18,9 @@
 #include "../common/config/ConfigHandler.h"
 #include "../common/network/TcpListener.h"
 #include "../common/crypto/CryptoHandler.h"
-#include "LoginSocket.h"
+#include "server/LoginSocket.h"
+
+#include "../common/crypto/Generator.h"
 
 int main(int argc, char* argv[])
 {

@@ -13,17 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef GCEMU_DESENCRYPTION_H
-#define GCEMU_DESENCRYPTION_H
+#ifndef GCEMU_LOGINOPCODES_H
+#define GCEMU_LOGINOPCODES_H
 
-#include <cstdint>
-#include <vector>
-
-class DesEncryption
+enum LoginOpcodes
 {
-public:
-    static std::vector<uint8_t> EncryptData(const std::vector<uint8_t>& data, const std::vector<uint8_t>& iv, const std::vector<uint8_t>& key);
-    static std::vector<uint8_t> DecryptData(const std::vector<uint8_t>& data, const uint8_t* iv, const std::vector<uint8_t>& key);
+    EVENT_HEART_BIT_NOT         = 0x0000,
+    EVENT_ACCEPT_CONNECTION_NOT = 0x0001,
+    ENU_VERIFY_ACCOUNT_REQ      = 0x0002,
+    ENU_WAIT_TIME_NOT           = 0x0005,
 };
 
-#endif //GCEMU_DESENCRYPTION_H
+#endif //GCEMU_LOGINOPCODES_H

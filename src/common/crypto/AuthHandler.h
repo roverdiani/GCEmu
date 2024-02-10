@@ -25,6 +25,8 @@ public:
     AuthHandler() = default;
     explicit AuthHandler(const std::vector<uint8_t>& hmacKey);
 
+    void UpdateHmacKey(const std::vector<uint8_t>& newKey);
+
     std::vector<uint8_t> GetHmac(const std::vector<uint8_t>& authData);
     bool VerifyHmac(const std::vector<uint8_t>& packetData);
 

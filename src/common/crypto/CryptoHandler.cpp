@@ -29,16 +29,10 @@ std::vector<uint8_t> CryptoHandler::EncryptPacket(const std::vector<uint8_t>& pa
     return DesEncryption::EncryptData(paddedData, iv, m_key);
 }
 
-std::vector<uint8_t> CryptoHandler::DecryptPacket(const std::vector<uint8_t>& packetData)
+std::vector<uint8_t> CryptoHandler::DecryptPacket(const std::vector<uint8_t>& encryptedData, const uint8_t* iv)
 {
-    std::vector<uint8_t> iv(packetData.begin() + 8, packetData.begin() + 8 + 8);
-    std::vector<uint8_t> encryptedData(packetData.begin() + 8 + 8, packetData.end() - 10 - 8 - 8);
-
     std::vector<uint8_t> decryptedData = DesEncryption::DecryptData(encryptedData, iv, m_key);
-    int32_t paddingLength = decryptedData.back() + 2;
-
-    std::vector<uint8_t> data(decryptedData.begin(), decryptedData.end() - paddingLength);
-    return data;
+    return decryptedData;
 }
 
 std::vector<uint8_t> CryptoHandler::PadData(std::vector<uint8_t> data)
@@ -60,6 +54,11 @@ std::vector<uint8_t> CryptoHandler::PadData(std::vector<uint8_t> data)
     return data;
 }
 
+void CryptoHandler::UpdateCryptoKey(const std::vector<uint8_t> &newKey)
+{
+    m_key = newKey;
+}
+
 bool CryptoHandler::InitOpenSSL()
 {
     // Starting with OpenSSL 3.0, several deprecated or insecure algorithms were moved into an
@@ -70,6 +69,13 @@ bool CryptoHandler::InitOpenSSL()
     if (legacy == nullptr)
     {
         std::cout << "CryptoHandler::InitOpenSSL: Error: Legacy Provider loading failed \n";
+        return false;
+    }
+
+    OSSL_PROVIDER* digest = OSSL_PROVIDER_load(nullptr, "default");
+    if (digest == nullptr)
+    {
+        std::cout << "CryptoHandler::InitOpenSSL: Error: Default Provider loading failed \n";
         return false;
     }
     OPENSSL_init();
