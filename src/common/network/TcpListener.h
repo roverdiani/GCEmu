@@ -20,6 +20,7 @@
 #include <thread>
 #include <boost/asio.hpp>
 #include "NetworkThread.h"
+#include <iostream>
 
 template <typename SocketType>
 class TcpListener

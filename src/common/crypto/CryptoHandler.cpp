@@ -15,9 +15,9 @@
 
 #include "CryptoHandler.h"
 #include "DesEncryption.h"
-#include <iostream>
 #include <openssl/provider.h>
 #include <openssl/crypto.h>
+#include <spdlog/spdlog.h>
 
 CryptoHandler::CryptoHandler(const std::vector<uint8_t> &key) : m_key(key)
 {
@@ -68,14 +68,14 @@ bool CryptoHandler::InitOpenSSL()
     OSSL_PROVIDER* legacy = OSSL_PROVIDER_load(nullptr, "legacy");
     if (legacy == nullptr)
     {
-        std::cout << "CryptoHandler::InitOpenSSL: Error: Legacy Provider loading failed \n";
+        spdlog::error("CryptoHandler::InitOpenSSL: Error: Legacy Provider loading failed");
         return false;
     }
 
     OSSL_PROVIDER* digest = OSSL_PROVIDER_load(nullptr, "default");
     if (digest == nullptr)
     {
-        std::cout << "CryptoHandler::InitOpenSSL: Error: Default Provider loading failed \n";
+        spdlog::error("CryptoHandler::InitOpenSSL: Error: Default Provider loading failed");
         return false;
     }
     OPENSSL_init();

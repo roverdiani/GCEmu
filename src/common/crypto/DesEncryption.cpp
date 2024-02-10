@@ -16,6 +16,7 @@
 #include "DesEncryption.h"
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <spdlog/spdlog.h>
 
 std::vector<uint8_t>
 DesEncryption::EncryptData(const std::vector<uint8_t> &data, const std::vector<uint8_t> &iv, const std::vector<uint8_t> &key)
@@ -28,7 +29,7 @@ DesEncryption::EncryptData(const std::vector<uint8_t> &data, const std::vector<u
 
     if (EVP_EncryptInit_ex(ctx, EVP_des_cbc(), nullptr, key.data(), iv.data()) != 1)
     {
-        printf("DesEncryption::EncryptData: Error: DES init error!");
+        spdlog::error("DesEncryption::EncryptData: Error: DES init error!");
         return std::vector<uint8_t>();
     }
 
@@ -38,14 +39,14 @@ DesEncryption::EncryptData(const std::vector<uint8_t> &data, const std::vector<u
     int32_t len = 0;
     if (EVP_EncryptUpdate(ctx, buf, &len, data.data(), (int) data.size()) != 1)
     {
-        printf("DesEncryption::EncryptData: Error: Encrypt error!");
+        spdlog::error("DesEncryption::EncryptData: Error: Encrypt error!");
         return std::vector<uint8_t>();
     }
     totalLength += len;
 
     if (EVP_EncryptFinal_ex(ctx, buf + len, &len) != 1)
     {
-        printf("DesEncryption::EncryptData: Error: Encrypt final error!");
+        spdlog::error("DesEncryption::EncryptData: Error: Encrypt final error!");
         return std::vector<uint8_t>();
     }
     totalLength += len;
@@ -70,7 +71,7 @@ DesEncryption::DecryptData(const std::vector<uint8_t> &data, const uint8_t* iv, 
 
     if (EVP_DecryptInit_ex(ctx, EVP_des_cbc(), nullptr, key.data(), iv) != 1)
     {
-        printf("DesEncryption::DecryptData: Error: DES init error!");
+        spdlog::error("DesEncryption::DecryptData: Error: DES init error!");
         return std::vector<uint8_t>();
     }
 
@@ -80,14 +81,14 @@ DesEncryption::DecryptData(const std::vector<uint8_t> &data, const uint8_t* iv, 
     int32_t len = 0;
     if (EVP_DecryptUpdate(ctx, buf, &len, data.data(), (int) data.size()) != 1)
     {
-        printf("DesEncryption::DecryptData: Error: Decrypt error!");
+        spdlog::error("DesEncryption::DecryptData: Error: Decrypt error!");
         return std::vector<uint8_t>();
     }
     totalLength += len;
 
     if (EVP_DecryptFinal_ex(ctx, buf + len, &len) != 1)
     {
-        printf("DesEncryption::DecryptData: Error: Decrypt final error!");
+        spdlog::error("DesEncryption::DecryptData: Error: Decrypt final error!");
         return std::vector<uint8_t>();
     }
     totalLength += len;

@@ -15,9 +15,9 @@
 
 #include "../crypto/Generator.h"
 #include "Packet.h"
-#include <iostream>
 #include <cstring>
 #include <boost/asio.hpp>
+#include <spdlog/spdlog.h>
 
 bool Packet::LoadData(const std::vector<uint8_t> &data)
 {
@@ -29,7 +29,7 @@ bool Packet::LoadData(const std::vector<uint8_t> &data)
     size_t minPacketSize = sizeof(PacketHeader) + 6 + sizeof(PacketAuthentication);
     if (data.size() < minPacketSize)
     {
-        std::cout << "Packet::LoadData: Error: packet doesn't have enough data." << std::endl;
+        spdlog::error("Packet::LoadData: Error: packet doesn't have enough data.");
         return false;
     }
 
@@ -91,13 +91,13 @@ bool Packet::VerifyHandlers()
 {
     if (!m_authHandler)
     {
-        std::cout << "Packet::LoadData: Error: invalid AuthHandler." << std::endl;
+        spdlog::error("Packet::LoadData: Error: invalid AuthHandler.");
         return false;
     }
 
     if (!m_cryptoHandler)
     {
-        std::cout << "Packet::LoadData: Error: invalid CryptoHandler." << std::endl;
+        spdlog::error("Packet::LoadData: Error: invalid CryptoHandler.");
         return false;
     }
 

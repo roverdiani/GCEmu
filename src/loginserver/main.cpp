@@ -14,50 +14,94 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <iostream>
 #include "../common/config/ConfigHandler.h"
 #include "../common/network/TcpListener.h"
 #include "../common/crypto/CryptoHandler.h"
 #include "server/LoginSocket.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <memory>
 
-#include "../common/crypto/Generator.h"
+bool IsRunning = false;
+
+bool InitLogger()
+{
+    try
+    {
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/loginserver.txt", true);
+        file_sink->set_level(spdlog::level::trace);
+        std::shared_ptr<spdlog::logger> logger = std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list { console_sink, file_sink });
+        spdlog::set_default_logger(logger);
+    }
+    catch (const spdlog::spdlog_ex &ex)
+    {
+        std::cout << "Log init failed: " << ex.what() << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+void OnKillSignal(int i)
+{
+    spdlog::warn("OnKillSignal: abort requested!");
+    spdlog::default_logger()->flush();
+    IsRunning = false;
+}
 
 int main(int argc, char* argv[])
 {
-    std::cout << R"(   ______ ______ ______                 )" << std::endl;
-    std::cout << R"(  / ____// ____// ____/____ ___   __  __)" << std::endl;
-    std::cout << R"( / / __ / /    / __/  / __ `__ \ / / / /)" << std::endl;
-    std::cout << R"(/ /_/ // /___ / /___ / / / / / // /_/ / )" << std::endl;
-    std::cout << R"(\____/ \____//_____//_/ /_/ /_/ \__,_/  )" << std::endl;
-    std::cout << std::endl;
+    if (!InitLogger())
+        return -1;
 
-    std::cout << "GCEmu Login Server" << std::endl;
-    std::cout << "<Ctrl-C> to stop." << std::endl;
+    signal(SIGINT, OnKillSignal);
+    signal(SIGABRT, OnKillSignal);
+    signal(SIGTERM, OnKillSignal);
 
-    std::cout << std::endl;
+    spdlog::set_pattern("%v");
+    spdlog::info(R"(   ______ ______ ______                 )");
+    spdlog::info(R"(  / ____// ____// ____/____ ___   __  __)");
+    spdlog::info(R"( / / __ / /    / __/  / __ `__ \ / / / /)");
+    spdlog::info(R"(/ /_/ // /___ / /___ / / / / / // /_/ / )");
+    spdlog::info(R"(\____/ \____//_____//_/ /_/ /_/ \____/  )");
+    spdlog::info("");
+
+    spdlog::info("GCEmu Login Server - <Ctrl-C> to stop");
+    spdlog::info("");
+
+    spdlog::set_pattern("[%m/%d/%Y %H:%M:%S] [%l] %v");
+
+    spdlog::info("Server initializing...");
 
     // Set and parse the configuration file.
-    if (SConfigHandler.SetConfigFile("loginserver.conf.json"))
-        std::cout << "Config file loaded." << std::endl;
-    else
+    spdlog::info("Loading config file...");
+    const std::string configFilename = "loginserver.conf.json";
+    if (!SConfigHandler.SetConfigFile(configFilename))
     {
-        std::cout << "Check if the config file is correct." << std::endl;
+        spdlog::error("Could not load the config file ({0}) - check if it is correct.", configFilename);
         return -1;
     }
+    spdlog::info("Config file ({0}) loaded.", configFilename);
 
-    std::cout << "Initializing OpenSSL... ";
+    spdlog::info("Initializing OpenSSL...");
     if (!CryptoHandler::InitOpenSSL())
     {
-        std::cout << "Failed to init OpenSSL. Exiting!" << std::endl;
+        spdlog::error("Failed to initialize OpenSSL.");
         return -1;
     }
-    std::cout << "done!" << std::endl;
+    spdlog::info("OpenSSL initialized.");
 
+    spdlog::info("Initializing TcpListener...");
     TcpListener<LoginSocket> listener("",
                                       SConfigHandler.GetInt("port", 9501),
                                       SConfigHandler.GetInt("network_threads", 1));
+    spdlog::info("TcpListener initialized.");
 
-    while (true);
+    IsRunning = true;
+
+    while (IsRunning);
 
     return 0;
 }

@@ -14,9 +14,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "Socket.h"
-#include <iostream>
 #include <memory>
 #include <boost/lexical_cast.hpp>
+#include <spdlog/spdlog.h>
 
 Socket::Socket(boost::asio::io_context &ioContext, const std::function<void(Socket *)>& closeHandler) : m_socket(ioContext)
 {
@@ -33,7 +33,7 @@ bool Socket::Open()
     }
     catch (boost::system::system_error& error)
     {
-        std::cout << "Socket::Open() failed to get remote address. Error: %s", error.what();
+        spdlog::error("Socket::Open() failed to get remote address. Error: {0}", error.what());
         return false;
     }
 

@@ -16,13 +16,12 @@
 #include "ConfigHandler.h"
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 bool ConfigHandler::SetConfigFile(const std::string &file)
 {
     std::filesystem::path configFilePath = file;
     m_filename = file;
-    std::cout << "ConfigHandler::SetConfigFile: using configuration file: " << std::filesystem::absolute(configFilePath) << std::endl;
 
     return Reload();
 }
@@ -38,7 +37,7 @@ bool ConfigHandler::Reload()
     m_data = nlohmann::json::parse(ifs, nullptr, false);
     if (m_data.is_discarded())
     {
-        std::cout << "ConfigHandler::Reload: JSON parse error." << std::endl;
+        spdlog::error("ConfigHandler::Reload: JSON parse error.");
         return false;
     }
 
