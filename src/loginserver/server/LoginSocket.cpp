@@ -68,10 +68,10 @@ void LoginSocket::EventAcceptConnectionNot()
 
     Packet pkt(LoginOpcodes::EVENT_ACCEPT_CONNECTION_NOT, false, m_authHandler, m_cryptoHandler);
     pkt << newPrefix;
-    pkt << newAuthKey.size();
-    pkt << newAuthKey;
     pkt << newCryptoKey.size();
     pkt << newCryptoKey;
+    pkt << newAuthKey.size();
+    pkt << newAuthKey;
     pkt << 0x01; // Unk1
     pkt << 0x00; // Unk2
     pkt << 0x00; // Unk3
