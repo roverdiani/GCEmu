@@ -57,4 +57,4 @@ This project should be used for testing and learning - if you use it to run an i
 
 * [Niels Lohmann's json library](https://github.com/nlohmann/json)
 * [CMaNGOS](https://github.com/cmangos/mangos-classic) - the networking code was *heavily* inspired or reused from their project, as it is code that is proven to work okay. Thank you, guys!
-* [GCNet](https://github.com/rocverde/GCNet)
+* [GCNet](https://github.com/SynnT/GCNet)
