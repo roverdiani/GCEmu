@@ -15,10 +15,11 @@
 
 #include "LoginSocket.h"
 #include "LoginOpcodes.h"
-#include "../../common/crypto/Generator.h"
+#include "../../common/crypto/Security.h"
 
 LoginSocket::LoginSocket(boost::asio::io_context &ioContext, const std::function<void(Socket *)>& closeHandler) : Socket(ioContext, closeHandler)
 {
+    m_securityAssociation = Security::GetInstance().GetDefaultSecurityAssociation();
 }
 
 bool LoginSocket::Open()
@@ -37,14 +38,15 @@ bool LoginSocket::ProcessIncomingData()
     if (!Read((char*) packetData.data(), 2))
         return false;
 
+    // FIXME: it's probably a bad idea to trust the client always on the packet length
     uint16_t packetLength = (packetData[1] << 8) | packetData[0];
     packetData.resize(packetLength);
 
     if (!Read((char*)packetData.data() + 2, packetLength - 2))
         return false;
 
-    Packet pkt(m_authHandler, m_cryptoHandler);
-    if (!pkt.LoadData(packetData))
+    Packet pkt;
+    if (!pkt.LoadData(packetData, m_securityAssociation))
         return false;
 
     return true;
@@ -56,29 +58,22 @@ void LoginSocket::SendPacket(Packet packet)
         return;
 
     std::lock_guard<std::mutex> lock(m_loginSocketMutex);
-    std::vector<uint8_t> packetData = packet.GetDataToSend(m_prefix, ++m_packetCount);
+    std::vector<uint8_t> packetData = packet.GetDataToSend(m_securityAssociation);
     Write(reinterpret_cast<const char*>(packetData.data()), (int32_t) packetData.size());
 }
 
 void LoginSocket::EventAcceptConnectionNot()
 {
-    uint16_t newPrefix = Generator::GeneratePrefix();
-    std::vector<uint8_t> newAuthKey = Generator::GenerateKey();
-    std::vector<uint8_t> newCryptoKey = Generator::GenerateKey();
+    uint16_t newSpi;
+    auto newSa = Security::GetInstance().CreateNewSecurityAssociation(newSpi);
+    if (!newSa)
+        return;
 
-    Packet pkt(LoginOpcodes::EVENT_ACCEPT_CONNECTION_NOT, false, m_authHandler, m_cryptoHandler);
-    pkt << newPrefix;
-    pkt << newCryptoKey.size();
-    pkt << newCryptoKey;
-    pkt << newAuthKey.size();
-    pkt << newAuthKey;
-    pkt << 0x01; // Unk1
-    pkt << 0x00; // Unk2
-    pkt << 0x00; // Unk3
+    Packet pkt(LoginOpcodes::EVENT_ACCEPT_CONNECTION_NOT, false);
+    pkt << newSpi;
+    pkt << newSa->GetSecurityAssociationData();
 
     SendPacket(pkt);
 
-    m_authHandler->UpdateHmacKey(newAuthKey);
-    m_cryptoHandler->UpdateCryptoKey(newCryptoKey);
-    m_prefix = newPrefix;
+    m_securityAssociation = newSa;
 }

@@ -19,6 +19,7 @@
 #include "../util/ByteBuffer.h"
 #include "../crypto/AuthHandler.h"
 #include "../crypto/CryptoHandler.h"
+#include "../crypto/SecurityAssociation.h"
 #include <cstdint>
 #include <memory>
 
@@ -33,14 +34,14 @@ private:
     struct PacketHeader
     {
         uint16_t Size;
-        uint16_t Prefix;
-        uint32_t PacketCount;
+        uint16_t Spi;
+        uint32_t SequenceNumber;
         uint8_t IV[8];
     };
 
     struct PacketAuthentication
     {
-        uint8_t HMAC[10];
+        uint8_t ICV[10];
     };
 #if defined( __GNUC__ )
 #pragma pack()
@@ -54,21 +55,17 @@ public:
     {
     }
 
-    explicit Packet(std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<CryptoHandler> cryptoHandler) : m_authHandler(std::move(authHandler)), m_cryptoHandler(std::move(cryptoHandler))
+    explicit Packet(uint8_t opcode, bool isCompressed, size_t reservedSize = 200) : m_opcode(opcode), m_isCompressed(isCompressed), ByteBuffer(reservedSize)
     {
     }
 
-    explicit Packet(uint8_t opcode, bool isCompressed, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<CryptoHandler> cryptoHandler, size_t reservedSize = 200) : m_opcode(opcode), m_isCompressed(isCompressed), m_authHandler(std::move(authHandler)), m_cryptoHandler(std::move(cryptoHandler)), ByteBuffer(reservedSize)
-    {
-    }
+    bool LoadData(const std::vector<uint8_t>& data, const std::shared_ptr<SecurityAssociation>& sa);
 
-    bool LoadData(const std::vector<uint8_t>& data);
-
-    std::vector<uint8_t> GetDataToSend(uint16_t prefix, uint32_t packetCount);
+    std::vector<uint8_t> GetDataToSend(const std::shared_ptr<SecurityAssociation>& sa);
+    std::vector<uint8_t> GetPayloadData();
 
 private:
-    bool VerifyHandlers();
-    void ReadPayload(const std::vector<uint8_t>& packetData);
+    void ReadPayload(const std::vector<uint8_t>& packetData, const std::shared_ptr<SecurityAssociation>& sa);
 
     PacketHeader m_packetHeader {};
 
@@ -78,9 +75,6 @@ private:
     bool m_isCompressed = false;
 
     PacketAuthentication m_packetAuthentication {};
-
-    std::shared_ptr<AuthHandler> m_authHandler = nullptr;
-    std::shared_ptr<CryptoHandler> m_cryptoHandler = nullptr;
 };
 
 #endif //GCEMU_PACKET_H

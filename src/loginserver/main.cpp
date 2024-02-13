@@ -16,7 +16,7 @@
 
 #include "../common/config/ConfigHandler.h"
 #include "../common/network/TcpListener.h"
-#include "../common/crypto/CryptoHandler.h"
+#include "../common/crypto/Security.h"
 #include "server/LoginSocket.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     spdlog::info("Config file ({0}) loaded.", configFilename);
 
     spdlog::info("Initializing OpenSSL...");
-    if (!CryptoHandler::InitOpenSSL())
+    if (!Security::InitOpenSSL())
     {
         spdlog::error("Failed to initialize OpenSSL.");
         return -1;

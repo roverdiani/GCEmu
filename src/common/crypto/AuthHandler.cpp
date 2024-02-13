@@ -16,26 +16,21 @@
 #include "AuthHandler.h"
 #include "Md5Hmac.h"
 
-AuthHandler::AuthHandler(const std::vector<uint8_t>& hmacKey) : m_hmacKey(hmacKey)
+AuthHandler::AuthHandler(const std::vector<uint8_t>& key) : m_key(key)
 {
 }
 
-std::vector<uint8_t> AuthHandler::GetHmac(const std::vector<uint8_t>& authData)
+std::vector<uint8_t> AuthHandler::GetICV(const std::vector<uint8_t>& data)
 {
-    return Md5Hmac::ComputeHmac(authData, m_hmacKey, 10);
+    return Md5Hmac::ComputeHmac(data, m_key, 10);
 }
 
-bool AuthHandler::VerifyHmac(const std::vector<uint8_t>& packetData)
+bool AuthHandler::VerifyICV(const std::vector<uint8_t>& data)
 {
-    std::vector<uint8_t> storedHmac(packetData.end() - 10, packetData.end());
+    std::vector<uint8_t> storedICV(data.end() - 10, data.end());
 
-    std::vector<uint8_t> authData(packetData.begin() + 2, packetData.end() - 10 - 2);
-    std::vector<uint8_t> expectedHmac = Md5Hmac::ComputeHmac(authData, m_hmacKey, 10);
+    std::vector<uint8_t> authData(data.begin() + 2, data.end() - 10 - 2);
+    std::vector<uint8_t> expectedICV = Md5Hmac::ComputeHmac(authData, m_key, 10);
 
-    return storedHmac == expectedHmac;
-}
-
-void AuthHandler::UpdateHmacKey(const std::vector<uint8_t> &newKey)
-{
-    m_hmacKey = newKey;
+    return storedICV == expectedICV;
 }

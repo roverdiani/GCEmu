@@ -22,21 +22,16 @@
 class CryptoHandler
 {
 public:
-    CryptoHandler() = default;
+    CryptoHandler() = delete;
     explicit CryptoHandler(const std::vector<uint8_t>& key);
 
-    void UpdateCryptoKey(const std::vector<uint8_t> &newKey);
-
-    static bool InitOpenSSL();
-
-    std::vector<uint8_t> EncryptPacket(const std::vector<uint8_t>& payload, const std::vector<uint8_t>& iv);
-    std::vector<uint8_t> DecryptPacket(const std::vector<uint8_t>& encryptedData, const uint8_t* iv);
+    std::vector<uint8_t> EncryptData(const std::vector<uint8_t>& data, const std::vector<uint8_t>& iv);
+    std::vector<uint8_t> DecryptData(const std::vector<uint8_t>& data, const uint8_t* iv);
 
     static std::vector<uint8_t> PadData(std::vector<uint8_t> data);
 
 private:
-    // Default DES key
-    std::vector<uint8_t> m_key = { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
+    std::vector<uint8_t> m_key {};
 };
 
 #endif //GCEMU_CRYPTOHANDLER_H

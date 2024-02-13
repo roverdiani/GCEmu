@@ -16,10 +16,9 @@
 #ifndef GCEMU_LOGINSOCKET_H
 #define GCEMU_LOGINSOCKET_H
 
-#include "../../common/crypto/AuthHandler.h"
-#include "../../common/crypto/CryptoHandler.h"
 #include "../../common/network/Socket.h"
 #include "../../common/network/Packet.h"
+#include "../../common/crypto/SecurityAssociation.h"
 #include <mutex>
 #include <boost/asio.hpp>
 
@@ -37,11 +36,7 @@ private:
 
     void EventAcceptConnectionNot();
 
-    std::shared_ptr<AuthHandler> m_authHandler = std::make_shared<AuthHandler>();
-    std::shared_ptr<CryptoHandler> m_cryptoHandler = std::make_shared<CryptoHandler>();
-
-    uint16_t m_prefix = 0x00;
-    uint32_t m_packetCount = 0x00;
+    std::shared_ptr<SecurityAssociation> m_securityAssociation = nullptr;
 
     std::mutex m_loginSocketMutex;
 };

@@ -15,24 +15,20 @@
 
 #include "CryptoHandler.h"
 #include "DesEncryption.h"
-#include <openssl/provider.h>
-#include <openssl/crypto.h>
-#include <spdlog/spdlog.h>
 
 CryptoHandler::CryptoHandler(const std::vector<uint8_t> &key) : m_key(key)
 {
 }
 
-std::vector<uint8_t> CryptoHandler::EncryptPacket(const std::vector<uint8_t>& payload, const std::vector<uint8_t>& iv)
+std::vector<uint8_t> CryptoHandler::EncryptData(const std::vector<uint8_t>& data, const std::vector<uint8_t>& iv)
 {
-    std::vector<uint8_t> paddedData = PadData(payload);
+    std::vector<uint8_t> paddedData = PadData(data);
     return DesEncryption::EncryptData(paddedData, iv, m_key);
 }
 
-std::vector<uint8_t> CryptoHandler::DecryptPacket(const std::vector<uint8_t>& encryptedData, const uint8_t* iv)
+std::vector<uint8_t> CryptoHandler::DecryptData(const std::vector<uint8_t>& data, const uint8_t* iv)
 {
-    std::vector<uint8_t> decryptedData = DesEncryption::DecryptData(encryptedData, iv, m_key);
-    return decryptedData;
+    return DesEncryption::DecryptData(data, iv, m_key);
 }
 
 std::vector<uint8_t> CryptoHandler::PadData(std::vector<uint8_t> data)
@@ -52,33 +48,4 @@ std::vector<uint8_t> CryptoHandler::PadData(std::vector<uint8_t> data)
     data.insert(data.end(), padding.begin(), padding.end());
 
     return data;
-}
-
-void CryptoHandler::UpdateCryptoKey(const std::vector<uint8_t> &newKey)
-{
-    m_key = newKey;
-}
-
-bool CryptoHandler::InitOpenSSL()
-{
-    // Starting with OpenSSL 3.0, several deprecated or insecure algorithms were moved into an
-    // internal library module called legacy provider, which is not loaded by default.
-    // As GC uses the DES algorithm, which is one of the deprecated algorithms, we need to load
-    // the provider before trying to use it.
-    OSSL_PROVIDER* legacy = OSSL_PROVIDER_load(nullptr, "legacy");
-    if (legacy == nullptr)
-    {
-        spdlog::error("CryptoHandler::InitOpenSSL: Error: Legacy Provider loading failed");
-        return false;
-    }
-
-    OSSL_PROVIDER* digest = OSSL_PROVIDER_load(nullptr, "default");
-    if (digest == nullptr)
-    {
-        spdlog::error("CryptoHandler::InitOpenSSL: Error: Default Provider loading failed");
-        return false;
-    }
-    OPENSSL_init();
-
-    return true;
 }

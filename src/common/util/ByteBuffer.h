@@ -23,6 +23,11 @@
 class ByteBuffer
 {
 public:
+    explicit ByteBuffer(size_t reservedSize = DEFAULT_SIZE)
+    {
+        m_storage.reserve(reservedSize);
+    }
+
     ByteBuffer& operator <<(uint8_t value)
     {
         Append<uint8_t>(value);
@@ -89,12 +94,41 @@ public:
         return *this;
     }
 
-protected:
-    explicit ByteBuffer(size_t reservedSize = DEFAULT_SIZE)
+    ByteBuffer& operator >>(int32_t& value)
     {
-        m_storage.reserve(reservedSize);
+        value = Read<int32_t>();
+        return *this;
     }
 
+    std::string Read(int32_t length)
+    {
+        std::string value;
+        for (int i = 0; i < length; i++)
+        {
+            char c = Read<char>();
+            value += c;
+        }
+
+        return value;
+    }
+
+    std::vector<uint8_t> ReadVector(int32_t length)
+    {
+        std::vector<uint8_t> value(length);
+        for (int i = 0; i < length; i++)
+        {
+            value[i] = Read<uint8_t>();
+        }
+
+        return value;
+    }
+
+    std::vector<uint8_t> GetData()
+    {
+        return m_storage;
+    }
+
+protected:
     const uint8_t* Data()
     {
         return &m_storage[0];
@@ -166,6 +200,24 @@ private:
         Append((uint8_t*) &value, sizeof(value));
     }
 
+    template <typename T>
+    T Read()
+    {
+        T val = Read<T>(m_readPosition);
+        m_readPosition += sizeof(T);
+        return val;
+    }
+
+    template <typename T>
+    T Read(size_t pos)
+    {
+        assert(pos + sizeof(T) <= Size());
+        T val = *((T const*)&m_storage[pos]);
+        EndianConvertReverse(val);
+        return val;
+    }
+
+    size_t m_readPosition = 0;
     size_t m_writePosition = 0;
 };
 

@@ -22,17 +22,14 @@
 class AuthHandler
 {
 public:
-    AuthHandler() = default;
-    explicit AuthHandler(const std::vector<uint8_t>& hmacKey);
+    AuthHandler() = delete;
+    explicit AuthHandler(const std::vector<uint8_t>& key);
 
-    void UpdateHmacKey(const std::vector<uint8_t>& newKey);
-
-    std::vector<uint8_t> GetHmac(const std::vector<uint8_t>& authData);
-    bool VerifyHmac(const std::vector<uint8_t>& packetData);
+    std::vector<uint8_t> GetICV(const std::vector<uint8_t>& data);
+    bool VerifyICV(const std::vector<uint8_t>& data);
 
 private:
-    // Default HMAC key
-    std::vector<uint8_t> m_hmacKey = { 0xC0, 0xD3, 0xBD, 0xC3, 0xB7, 0xCE, 0xB8, 0xB8 };
+    std::vector<uint8_t> m_key {};
 };
 
 #endif //GCEMU_AUTHHANDLER_H
