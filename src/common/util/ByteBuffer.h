@@ -116,9 +116,7 @@ public:
     {
         std::vector<uint8_t> value(length);
         for (int i = 0; i < length; i++)
-        {
             value[i] = Read<uint8_t>();
-        }
 
         return value;
     }
