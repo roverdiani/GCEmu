@@ -17,6 +17,8 @@
 #include "../common/config/ConfigHandler.h"
 #include "../common/network/TcpListener.h"
 #include "../common/crypto/Security.h"
+#include <openssl/opensslv.h>
+#include <boost/version.hpp>
 #include "server/LoginSocket.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -69,6 +71,7 @@ int main(int argc, char* argv[])
     spdlog::info("");
 
     spdlog::info("GCEmu Login Server - <Ctrl-C> to stop");
+    spdlog::info("{0}, Boost {1}", OPENSSL_VERSION_TEXT, BOOST_LIB_VERSION);
     spdlog::info("");
 
     spdlog::set_pattern("[%m/%d/%Y %H:%M:%S] [%l] %v");
