@@ -14,7 +14,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "Security.h"
-#include <iostream>
 #include <openssl/provider.h>
 #include <openssl/crypto.h>
 #include <spdlog/spdlog.h>
@@ -34,7 +33,7 @@ std::shared_ptr<SecurityAssociation> Security::CreateNewSecurityAssociation(uint
 
     if (m_securityAssociationMap.find(newSpi) != m_securityAssociationMap.end())
     {
-        std::cout << "Security Association with specified SPI already exists!" << std::endl;
+        spdlog::error("Security Association with specified SPI (0x{0}) already exists!", newSpi);
         return nullptr;
     }
 
@@ -49,7 +48,7 @@ std::shared_ptr<SecurityAssociation> Security::GetSecurityAssociation(uint16_t s
     auto itr = m_securityAssociationMap.find(spi);
     if (itr == m_securityAssociationMap.end())
     {
-        std::cout << "Could not find the specified Security Association." << std::endl;
+        spdlog::error("Could not find the specified Security Association. SPI 0x{0}", spi);
         return nullptr;
     }
 
