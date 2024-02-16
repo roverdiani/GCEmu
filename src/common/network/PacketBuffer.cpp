@@ -15,6 +15,7 @@
 
 #include "PacketBuffer.h"
 #include <cassert>
+#include <cstring>
 
 PacketBuffer::PacketBuffer(int32_t initialSize) : m_buffer(initialSize, 0)
 {

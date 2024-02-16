@@ -17,6 +17,7 @@
 #define GCEMU_SECURITYASSOCIATION_H
 
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include "AuthHandler.h"
 #include "CryptoHandler.h"

@@ -17,6 +17,9 @@
 #define GCEMU_BYTEBUFFER_H
 
 #include <cassert>
+#include <cmath>
+#include <cstring>
+#include <cstdint>
 #include <vector>
 #include "ByteConverter.h"
 
