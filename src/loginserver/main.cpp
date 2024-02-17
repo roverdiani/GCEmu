@@ -15,17 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../common/config/ConfigHandler.h"
-#include "../common/network/TcpListener.h"
+#include "../common/database/Database.h"
 #include "../common/crypto/Security.h"
+#include "../common/network/TcpListener.h"
+#include "server/LoginSocket.h"
+#include <memory>
 #include <openssl/opensslv.h>
 #include <boost/version.hpp>
-#include "server/LoginSocket.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <memory>
 
 bool IsRunning = false;
+Database database;
 
 bool InitLogger()
 {
@@ -95,6 +97,15 @@ int main(int argc, char* argv[])
         return -1;
     }
     spdlog::info("OpenSSL initialized.");
+
+    spdlog::info("Initializing the database...");
+    if (!database.Initialize(SConfigHandler.GetString("database_info", "127.0.0.1;3306;gcemu;gcemu;gcemu"),
+                             SConfigHandler.GetInt("database_connections", 1)))
+    {
+        spdlog::error("Failed to initialize the database.");
+        return -1;
+    }
+    spdlog::info("Database initialized.");
 
     spdlog::info("Initializing TcpListener...");
     TcpListener<LoginSocket> listener("",

@@ -49,6 +49,31 @@ public:
         // Each char in the u16string is 2 bytes
         std::u16string str(input.size() / 2, '\0');
         memcpy(&(*str.begin()), &(*input.begin()), input.size());
+
+        return str;
+    }
+
+    static std::vector<std::string> StringSplit(const std::string& source, const std::string& separator)
+    {
+        std::vector<std::string> r;
+        std::string s;
+        for (char i : source)
+        {
+            if (separator.find(i) != std::string::npos)
+            {
+                if (!s.empty())
+                    r.push_back(s);
+
+                s.clear();
+            }
+            else
+                s += i;
+        }
+
+        if (!s.empty())
+            r.push_back(s);
+
+        return r;
     }
 };
 

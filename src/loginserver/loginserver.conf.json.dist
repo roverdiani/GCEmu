@@ -1,5 +1,7 @@
 {
   "bind_ip": "0.0.0.0",
   "port": 9501,
-  "network_threads": 1
+  "network_threads": 1,
+  "database_info": "127.0.0.1;3306;gcemu;gcemu;gcemu",
+  "database_connections": 1
 }
