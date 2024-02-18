@@ -33,7 +33,7 @@ bool Packet::LoadData(const std::vector<uint8_t>& data, const std::shared_ptr<Se
     // Copy packet header from the start of the packet data
     memcpy(&m_packetHeader, &(*data.begin()), sizeof(m_packetHeader));
 
-    // Read packet payload
+    // ReadString packet payload
     ReadPayload(data, sa);
 
     // Copy packet authentication from the end of the packet data
@@ -121,4 +121,14 @@ void Packet::ReadPayload(const std::vector<uint8_t>& packetData, const std::shar
 std::vector<uint8_t> Packet::GetPayloadData()
 {
     return m_storage;
+}
+
+uint16_t Packet::GetOpcode() const
+{
+    return m_opcode;
+}
+
+uint32_t Packet::GetPayloadLength() const
+{
+    return m_payloadLength;
 }

@@ -15,7 +15,13 @@
 
 #include "LoginSocket.h"
 #include "LoginOpcodes.h"
+#include "AccountVerificationResults.h"
 #include "../../common/crypto/Security.h"
+#include "../../common/database/Database.h"
+#include "../../common/util/StringUtil.h"
+#include <spdlog/spdlog.h>
+
+extern Database database;
 
 LoginSocket::LoginSocket(boost::asio::io_context &ioContext, const std::function<void(Socket *)>& closeHandler) : Socket(ioContext, closeHandler)
 {
@@ -49,6 +55,19 @@ bool LoginSocket::ProcessIncomingData()
     if (!pkt.LoadData(packetData, m_securityAssociation))
         return false;
 
+    switch (pkt.GetOpcode())
+    {
+        case EVENT_HEART_BIT_NOT:
+            HandleEventHeartBitNot();
+            break;
+        case EVENT_ACCEPT_CONNECTION_NOT:
+            break;
+        case ENU_VERIFY_ACCOUNT_REQ:
+            HandleEnuVerifyAccountReq(pkt);
+        default:
+            return true;
+    }
+
     return true;
 }
 
@@ -76,4 +95,45 @@ void LoginSocket::EventAcceptConnectionNot()
     SendPacket(pkt);
 
     m_securityAssociation = newSa;
+}
+
+void LoginSocket::HandleEventHeartBitNot()
+{
+    spdlog::info("EVENT_HEART_BIT_NOT");
+}
+
+void LoginSocket::HandleEnuVerifyAccountReq(Packet &pkt)
+{
+    spdlog::info("ENU_VERIFY_ACCOUNT_REQ");
+    // The minimum packet length for this is 61 bytes
+    if (pkt.GetPayloadLength() < 61)
+    {
+        spdlog::error("LoginSocket::HandleEnuVerifyAccountReq invalid size.");
+        return;
+    }
+
+    uint32_t usernameLength;
+    pkt >> usernameLength;
+    std::string username = pkt.ReadString(usernameLength);
+
+    uint32_t passwordHashLength;
+    pkt >> passwordHashLength;
+    std::vector<uint8_t> passwordHash = pkt.ReadVector(passwordHashLength);
+
+    Packet outPacket((uint16_t) ENU_VERIFY_ACCOUNT_ACK, false);
+    auto queryResult = database.PreparedQuery("SELECT * FROM account WHERE username = '%s'", username.c_str());
+    if (!queryResult)
+    {
+        // No account found on the database with the provided data.
+        spdlog::info("LoginSocket::HandleEnuVerifyAccountReq: username not found.");
+        outPacket << AccountVerificationResults::ERR_USER_NOT_FOUND;
+        outPacket.WriteU16String(StringUtil::Utf8To16(username));
+        outPacket << (uint32_t) 0x00; // NMPasswd String Length - unused here
+        outPacket << (uint8_t) false; // IsMale - the client sends this as the default value
+        outPacket << 0x14; // Age - the client sends this as the default value
+        SendPacket(outPacket);
+        return;
+    }
+
+    spdlog::info("LoginSocket::HandleEnuVerifyAccountReq: username found.");
 }

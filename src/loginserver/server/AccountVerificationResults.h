@@ -1,0 +1,13 @@
+//
+// Created by rov on 2/18/24.
+//
+
+#ifndef GCEMU_ACCOUNTVERIFICATIONRESULTS_H
+#define GCEMU_ACCOUNTVERIFICATIONRESULTS_H
+
+enum AccountVerificationResults
+{
+    ERR_USER_NOT_FOUND  = 0x0B,
+};
+
+#endif //GCEMU_ACCOUNTVERIFICATIONRESULTS_H

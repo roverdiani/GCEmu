@@ -64,6 +64,9 @@ public:
     std::vector<uint8_t> GetDataToSend(const std::shared_ptr<SecurityAssociation>& sa);
     std::vector<uint8_t> GetPayloadData();
 
+    uint16_t GetOpcode() const;
+    uint32_t GetPayloadLength() const;
+
 private:
     void ReadPayload(const std::vector<uint8_t>& packetData, const std::shared_ptr<SecurityAssociation>& sa);
 

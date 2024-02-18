@@ -16,12 +16,13 @@
 #ifndef GCEMU_BYTEBUFFER_H
 #define GCEMU_BYTEBUFFER_H
 
+#include "ByteConverter.h"
+#include "StringUtil.h"
 #include <cassert>
 #include <cmath>
 #include <cstring>
 #include <cstdint>
 #include <vector>
-#include "ByteConverter.h"
 
 class ByteBuffer
 {
@@ -103,7 +104,13 @@ public:
         return *this;
     }
 
-    std::string Read(int32_t length)
+    ByteBuffer& operator >>(uint32_t& value)
+    {
+        value = Read<uint32_t>();
+        return *this;
+    }
+
+    std::string ReadString(uint32_t length)
     {
         std::string value;
         for (int i = 0; i < length; i++)
@@ -115,13 +122,30 @@ public:
         return value;
     }
 
-    std::vector<uint8_t> ReadVector(int32_t length)
+    std::vector<uint8_t> ReadVector(uint32_t length)
     {
         std::vector<uint8_t> value(length);
         for (int i = 0; i < length; i++)
             value[i] = Read<uint8_t>();
 
         return value;
+    }
+
+    void WriteString(const std::string& str)
+    {
+        // Write the length of the string first.
+        Append((uint32_t) str.size());
+
+        // FIXME: maybe? don't write the null terminator at the end of the string
+        for (char c : str)
+            Append(c);
+    }
+
+    void WriteU16String(const std::u16string& str)
+    {
+        std::vector<uint8_t> strData = StringUtil::Utf16ToVector(str);
+        Append((uint32_t) strData.size());
+        Append(strData);
     }
 
     std::vector<uint8_t> GetData()

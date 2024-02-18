@@ -36,6 +36,9 @@ private:
 
     void EventAcceptConnectionNot();
 
+    void HandleEventHeartBitNot();
+    void HandleEnuVerifyAccountReq(Packet& pkt);
+
     std::shared_ptr<SecurityAssociation> m_securityAssociation = nullptr;
 
     std::mutex m_loginSocketMutex;

@@ -16,6 +16,16 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`gcemu` /*!40100 DEFAULT CHARACTER SET u
 
 USE `gcemu`;
 
+/*Table structure for table `accounts` */
+
+DROP TABLE IF EXISTS `accounts`;
+
+CREATE TABLE `accounts` (
+                            `username` varchar(20) NOT NULL,
+                            `password` varchar(32) NOT NULL,
+                            PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

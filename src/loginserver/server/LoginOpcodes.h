@@ -21,6 +21,7 @@ enum LoginOpcodes
     EVENT_HEART_BIT_NOT         = 0x0000,
     EVENT_ACCEPT_CONNECTION_NOT = 0x0001,
     ENU_VERIFY_ACCOUNT_REQ      = 0x0002,
+    ENU_VERIFY_ACCOUNT_ACK      = 0x0003,
     ENU_WAIT_TIME_NOT           = 0x0005,
 };
 

@@ -35,5 +35,6 @@ add_executable(loginserver main.cpp ../common/config/ConfigHandler.cpp ../common
         ../common/database/MySqlConnection.h
         ../common/database/SqlOperations.h
         ../common/database/Database.cpp
-        ../common/database/Database.h)
+        ../common/database/Database.h
+        server/AccountVerificationResults.h)
 target_link_libraries(loginserver boost::boost openssl::openssl spdlog::spdlog ZLIB::ZLIB libmysqlclient::libmysqlclient)
