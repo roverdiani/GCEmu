@@ -20,4 +20,4 @@ if (WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/loginserver" "${PROJECT_SOURCE_DIR}/build")
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/loginserver")

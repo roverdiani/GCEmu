@@ -18,7 +18,7 @@ GCEmu is an open-source game server application designed for hosting online game
 ## Built With
 
 The project is built using C++ 17, CMake, Boost, OpenSSL and some other libraries.
-For now, the project is mainly developed using Windows.
+For now, the project is mainly developed using Linux.
 
 ## Getting Started
 
@@ -29,7 +29,6 @@ Instructions on how to get the project up and running will be written as the pro
 There are some pre-requisites for building the project.
 
 * CMake
-* Conan.io
 * C++ build toolchain
 
 ## Contributing

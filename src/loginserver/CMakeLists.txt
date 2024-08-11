@@ -18,14 +18,11 @@ project(loginserver)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Boost REQUIRED)
-find_package(nlohmann_json REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(utf8cpp REQUIRED)
-find_package(libmysqlclient REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIRS} ${nlohmann_json_INCLUDE_DIRS} ${OpenSSL_INCLUDE_DIRS} ${spdlog_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${utf8cpp_INCLUDE_DIRS} ${libmysqlclient_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS} ${OpenSSL_INCLUDE_DIRS} ${spdlog_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${utf8cpp_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/lib/)
 
 add_executable(loginserver main.cpp ../common/config/ConfigHandler.cpp ../common/config/ConfigHandler.h ../common/network/TcpListener.h ../common/network/NetworkThread.h ../common/network/Socket.cpp ../common/network/Socket.h ../common/network/PacketBuffer.cpp ../common/network/PacketBuffer.h server/LoginSocket.cpp server/LoginSocket.h ../common/crypto/AuthHandler.cpp ../common/crypto/AuthHandler.h ../common/crypto/Md5Hmac.h ../common/crypto/CryptoHandler.cpp ../common/crypto/CryptoHandler.h ../common/crypto/DesEncryption.cpp ../common/crypto/DesEncryption.h ../common/util/ByteBuffer.h ../common/network/Packet.h ../common/crypto/Generator.h server/LoginOpcodes.h server/LoginOpcodes.cpp server/OpcodeMap.h server/OpcodeMap.cpp server/LoginSession.cpp server/LoginSession.h ../common/util/ByteConverter.h ../common/network/Packet.cpp ../common/util/Compressor.h ../common/crypto/Security.cpp ../common/crypto/Security.h ../common/crypto/SecurityAssociation.h ../common/crypto/SecurityAssociation.cpp
         ../common/util/StringUtil.h
@@ -37,4 +34,4 @@ add_executable(loginserver main.cpp ../common/config/ConfigHandler.cpp ../common
         ../common/database/Database.cpp
         ../common/database/Database.h
         server/AccountVerificationResults.h)
-target_link_libraries(loginserver boost::boost openssl::openssl spdlog::spdlog ZLIB::ZLIB libmysqlclient::libmysqlclient)
+target_link_libraries(loginserver boost_thread ssl crypto spdlog::spdlog ZLIB::ZLIB mysqlclient)

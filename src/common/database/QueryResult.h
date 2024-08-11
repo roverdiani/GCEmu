@@ -19,7 +19,7 @@
 #include "DatabaseField.h"
 #include <cstdint>
 #include <vector>
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 class QueryResult
 {

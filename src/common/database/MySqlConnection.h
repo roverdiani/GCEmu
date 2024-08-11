@@ -19,7 +19,7 @@
 #include "QueryResult.h"
 #include <memory>
 #include <string>
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 class MySqlConnection
 {
